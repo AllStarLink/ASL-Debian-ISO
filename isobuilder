@@ -1,0 +1,122 @@
+#!/bin/bash
+
+# Logic Checks
+if [ ! -x /usr/bin/xorriso ]; then
+	echo "xorriso is not installed"
+	exit 1
+fi
+
+if [ ! -x /usr/bin/mcopy ]; then
+	echo "mcopy/mtools is not installed"
+	exit 1
+fi
+
+if [ ! -f /usr/lib/ISOLINUX/isohdpfx.bin ]; then
+	echo "isolinux is not installed"
+	exit 1
+fi
+
+if [ ! -x /usr/bin/patch ]; then
+	echo "patch is not installed"
+	exit 1
+fi
+
+# Argparse
+OPTIND=1
+while getopts d:v: opt
+do
+	case $opt in
+		d)
+			debian_ver=$OPTARG
+			;;
+		v)
+			build_ver=$OPTARG
+			;;
+		*)
+			exit 1
+			;;
+	esac
+done
+
+if [ -z "${debian_ver}" ]; then
+	echo "Missing '-d DEBIAN.iso'"
+	exit 1
+fi
+
+if [ -z "${build_ver}" ]; then
+	echo "Missing '-v BUILD_VER'"
+	exit 1
+fi
+
+DEB_ISO=$debian_ver
+TMP_DIR=$(mktemp -d)
+
+if [ ! -d iso/ ]; then
+	mkdir iso
+else
+	chmod -R +w iso/
+	rm -rf iso/*
+fi
+
+set -x 
+set -e
+
+# Unpack the ISO
+xorriso -osirrox on -indev $debian_ver \
+	 -extract / iso/
+cd iso
+
+## Update Grub/EFI
+chmod -R +w boot/grub EFI/debian
+patch -p0 < ../grub.patch
+cp boot/grub/grub.cfg boot/grub/x86_64-efi/grub.cfg
+cp boot/grub/grub.cfg EFI/debian/grub.cfg
+mcopy -Do -i boot/grub/efi.img boot/grub/grub.cfg ::efi/debian/grub.cfg
+mcopy -i boot/grub/efi.img ::efi/debian/grub.cfg /tmp/grub-efi-verify.cfg
+sha256sum boot/grub/grub.cfg boot/grub/x86_64-efi/grub.cfg \
+	EFI/debian/grub.cfg /tmp/grub-efi-verify.cfg
+rm /tmp/grub-efi-verify.cfg
+chmod -R -w boot/grub EFI/debian
+
+## Update ISOLINUX
+chmod -R +w isolinux/
+patch -p0 < ../isolinux.patch
+chmod -R -w isolinux/
+
+## Add preseed to the initrd
+chmod -R +w install.amd/
+find install.amd/ -name 'initrd.gz' -type f | while read f
+do
+	gunzip $f
+	f=$(echo $f | sed 's/\.gz//g')
+	echo ../preseed.cfg | cpio -H newc -o -A -F $f
+	gzip $f
+done
+chmod -R -w install.amd/
+
+## Stage our custom files
+cp ../post-install.sh .
+mkdir asl3
+cp ../src/* asl3/
+chmod 755 post-install.sh
+
+## Regnerate the md5sum.txt
+chmod +w md5sum.txt
+find -follow -type f ! -name md5sum.txt -print0 | xargs -0 md5sum > md5sum.txt
+chmod -w md5sum.txt
+
+## Build the preseeded image
+xorriso -as mkisofs \
+    -r \
+    -V "ASL Debian Installer" \
+    -o ../asl-debian-installer-v$build_ver.iso \
+    -J -joliet-long \
+    -cache-inodes \
+    -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
+    -b isolinux/isolinux.bin \
+      -no-emul-boot -boot-load-size 4 -boot-info-table \
+    -eltorito-alt-boot \
+    -e boot/grub/efi.img \
+      -no-emul-boot \
+    -isohybrid-gpt-basdat \
+    .

@@ -1,0 +1,11 @@
+[Unit]
+Description=AllStarLink First Boot Setup
+Before=asterisk.service allmon3.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/asl3-firstboot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

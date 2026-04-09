@@ -1,0 +1,90 @@
+diff -u isolinux.orig/drk.cfg isolinux/drk.cfg
+--- isolinux.orig/drk.cfg	2026-04-09 18:23:28.776069572 -0400
++++ isolinux/drk.cfg	2026-04-09 18:34:02.156114317 -0400
+@@ -1,6 +1,6 @@
+ label installdark
+ default installdark
+-	menu label ^Install
++	menu label ^AllStarLink Text Install
+ 	menu default
+ 	kernel /install.amd/vmlinuz
+-	append vga=788 initrd=/install.amd/initrd.gz theme=dark --- quiet 
++	append auto=true priority=critical vga=788 initrd=/install.amd/initrd.gz theme=dark --- quiet 
+diff -u isolinux.orig/drkgtk.cfg isolinux/drkgtk.cfg
+--- isolinux.orig/drkgtk.cfg	2026-04-09 18:23:28.788069572 -0400
++++ isolinux/drkgtk.cfg	2026-04-09 18:34:11.396114024 -0400
+@@ -1,6 +1,6 @@
+ label installdarkgui
+ default installdarkgui
+-	menu label ^Graphical install
++	menu label ^AllStarLink Graphical install
+ 	menu default
+ 	kernel /install.amd/vmlinuz
+-	append vga=788 initrd=/install.amd/gtk/initrd.gz theme=dark --- quiet 
++	append auto=true priority=critical vga=788 initrd=/install.amd/gtk/initrd.gz theme=dark --- quiet 
+diff -u isolinux.orig/gtk.cfg isolinux/gtk.cfg
+--- isolinux.orig/gtk.cfg	2026-04-09 18:23:28.788069572 -0400
++++ isolinux/gtk.cfg	2026-04-09 18:24:19.124073510 -0400
+@@ -1,6 +1,6 @@
+ default installgui
+ label installgui
+-	menu label ^Graphical install
++	menu label ^AllStarLink Graphical Install
+ 	menu default
+ 	kernel /install.amd/vmlinuz
+-	append vga=788 initrd=/install.amd/gtk/initrd.gz --- quiet 
++	append auto=true priority=critical vga=788 initrd=/install.amd/gtk/initrd.gz --- quiet 
+diff -u isolinux.orig/menu.cfg isolinux/menu.cfg
+--- isolinux.orig/menu.cfg	2026-04-09 18:23:28.788069572 -0400
++++ isolinux/menu.cfg	2026-04-09 18:29:05.980097584 -0400
+@@ -5,18 +5,6 @@
+ include stdmenu.cfg
+ include gtk.cfg
+ include txt.cfg
+-menu begin advanced
+-    menu label ^Advanced options
+-	menu title Advanced options
+-	include stdmenu.cfg
+-	label mainmenu
+-		menu label ^Back..
+-		menu exit
+-	include adgtk.cfg
+-	include adtxt.cfg
+-	include adspkgtk.cfg
+-	include adspk.cfg
+-menu end
+ menu begin dark
+     menu label Accessible ^dark contrast installer menu
+ 	menu title Accessible dark contrast option
+@@ -33,8 +21,6 @@
+ 		label mainmenu
+ 			menu label ^Back..
+ 			menu exit
+-		include addrkgtk.cfg
+-		include addrk.cfg
+ 	menu end
+ 	include x86drkme.cfg
+ 	label help
+diff -u isolinux.orig/spkgtk.cfg isolinux/spkgtk.cfg
+--- isolinux.orig/spkgtk.cfg	2026-04-09 18:23:28.788069572 -0400
++++ isolinux/spkgtk.cfg	2026-04-09 18:34:44.452116836 -0400
+@@ -1,7 +1,7 @@
+ label installspk
+-	menu label Install with ^speech synthesis
++	menu label AllStarLink Install with ^speech synthesis
+ 	kernel /install.amd/vmlinuz
+-	append vga=788 initrd=/install.amd/gtk/initrd.gz speakup.synth=soft --- quiet 
++	append auto=true priority=critical vga=788 initrd=/install.amd/gtk/initrd.gz speakup.synth=soft --- quiet 
+ # timeout to speech-enabled install
+ timeout 300
+ ontimeout /install.amd/vmlinuz vga=788 initrd=/install.amd/gtk/initrd.gz speakup.synth=soft --- quiet 
+diff -u isolinux.orig/txt.cfg isolinux/txt.cfg
+--- isolinux.orig/txt.cfg	2026-04-09 18:23:28.792069572 -0400
++++ isolinux/txt.cfg	2026-04-09 18:25:24.168078269 -0400
+@@ -1,4 +1,4 @@
+ label install
+-	menu label ^Install
++	menu label ^AllStarLink Text Install
+ 	kernel /install.amd/vmlinuz
+-	append vga=788 initrd=/install.amd/initrd.gz --- quiet 
++	append auto=true priority=critical vga=788 initrd=/install.amd/initrd.gz --- quiet 

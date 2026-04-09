@@ -1,0 +1,141 @@
+diff -ur boot.orig/grub/grub.cfg boot/grub/grub.cfg
+--- boot.orig/grub/grub.cfg	2026-04-09 18:29:49.004098816 -0400
++++ boot/grub/grub.cfg	2026-04-09 18:33:15.932108078 -0400
+@@ -32,14 +32,14 @@
+ insmod play
+ play 960 440 1 0 4 440 1
+ set theme=/boot/grub/theme/1
+-menuentry --hotkey=g 'Graphical install' {
++menuentry --hotkey=g 'AllStarLink Graphical Install' {
+     set background_color=black
+-    linux    /install.amd/vmlinuz vga=788 --- quiet 
++    linux    /install.amd/vmlinuz priority=critical vga=788 --- quiet 
+     initrd   /install.amd/gtk/initrd.gz
+ }
+-menuentry --hotkey=i 'Install' {
++menuentry --hotkey=i 'AllStarLink Text Install' {
+     set background_color=black
+-    linux    /install.amd/vmlinuz vga=788 --- quiet 
++    linux    /install.amd/vmlinuz priority=critical vga=788 --- quiet 
+     initrd   /install.amd/initrd.gz
+ }
+ submenu --hotkey=a 'Advanced options ...' {
+@@ -47,56 +47,26 @@
+     set menu_color_highlight=white/blue
+     set theme=/boot/grub/theme/1-1
+     set gfxpayload=keep
+-    menuentry '... Graphical expert install' {
+-        set background_color=black
+-        linux    /install.amd/vmlinuz priority=low vga=788 --- 
+-        initrd   /install.amd/gtk/initrd.gz
+-    }
+     menuentry '... Graphical rescue mode' {
+         set background_color=black
+         linux    /install.amd/vmlinuz vga=788 rescue/enable=true --- quiet  
+         initrd   /install.amd/gtk/initrd.gz
+     }
+-    menuentry '... Graphical automated install' {
+-        set background_color=black
+-        linux    /install.amd/vmlinuz auto=true priority=critical vga=788 --- quiet 
+-        initrd   /install.amd/gtk/initrd.gz
+-    }
+-    menuentry --hotkey=x '... Expert install' {
+-        set background_color=black
+-        linux    /install.amd/vmlinuz priority=low vga=788 --- 
+-        initrd   /install.amd/initrd.gz
+-    }
+     menuentry --hotkey=r '... Rescue mode' {
+         set background_color=black
+         linux    /install.amd/vmlinuz vga=788 rescue/enable=true --- quiet 
+         initrd   /install.amd/initrd.gz
+     }
+-    menuentry --hotkey=a '... Automated install' {
+-        set background_color=black
+-        linux    /install.amd/vmlinuz auto=true priority=critical vga=788 --- quiet 
+-        initrd   /install.amd/initrd.gz
+-    }
+     submenu --hotkey=s '... Speech-enabled advanced options ...' {
+         set menu_color_normal=cyan/blue
+         set menu_color_highlight=white/blue
+         set theme=/boot/grub/theme/1-1-1
+         set gfxpayload=keep
+-        menuentry --hotkey=x '... Expert speech install' {
+-            set background_color=black
+-            linux    /install.amd/vmlinuz priority=low vga=788 speakup.synth=soft --- 
+-            initrd   /install.amd/gtk/initrd.gz
+-        }
+         menuentry --hotkey=r '... Rescue speech mode' {
+             set background_color=black
+             linux    /install.amd/vmlinuz vga=788 rescue/enable=true speakup.synth=soft --- quiet  
+             initrd   /install.amd/gtk/initrd.gz
+         }
+-        menuentry --hotkey=a '... Automated speech install' {
+-            set background_color=black
+-            linux    /install.amd/vmlinuz auto=true priority=critical vga=788 speakup.synth=soft --- quiet 
+-            initrd   /install.amd/gtk/initrd.gz
+-        }
+     }
+ }
+ submenu --hotkey=d 'Accessible dark contrast installer menu ...' {
+@@ -107,14 +77,14 @@
+     background_image
+     set theme=/boot/grub/theme/dark-1-2
+     set gfxpayload=keep
+-    menuentry --hotkey=g '... Graphical install' {
++    menuentry --hotkey=g '... AllStarLink Graphical Install' {
+         set background_color=black
+-        linux    /install.amd/vmlinuz vga=788 theme=dark --- quiet 
++        linux    /install.amd/vmlinuz priority=critical vga=788 theme=dark --- quiet 
+         initrd   /install.amd/gtk/initrd.gz
+     }
+-    menuentry --hotkey=i '... Install' {
++    menuentry --hotkey=i '... AllStarLink Text Install' {
+         set background_color=black
+-        linux    /install.amd/vmlinuz vga=788 theme=dark --- quiet 
++        linux    /install.amd/vmlinuz priority=critical vga=788 theme=dark --- quiet 
+         initrd   /install.amd/initrd.gz
+     }
+     submenu --hotkey=a '... Advanced options ...' {
+@@ -125,40 +95,20 @@
+         background_image
+         set theme=/boot/grub/theme/dark-1-2-1
+         set gfxpayload=keep
+-        menuentry '... Graphical expert install' {
+-            set background_color=black
+-            linux    /install.amd/vmlinuz priority=low vga=788 theme=dark --- 
+-            initrd   /install.amd/gtk/initrd.gz
+-        }
+         menuentry '... Graphical rescue mode' {
+             set background_color=black
+             linux    /install.amd/vmlinuz vga=788 rescue/enable=true theme=dark --- quiet 
+             initrd   /install.amd/gtk/initrd.gz
+         }
+-        menuentry '... Graphical automated install' {
+-            set background_color=black
+-            linux    /install.amd/vmlinuz auto=true priority=critical vga=788 theme=dark --- quiet 
+-            initrd   /install.amd/gtk/initrd.gz
+-        }
+-        menuentry --hotkey=x '... Expert install' {
+-            set background_color=black
+-            linux    /install.amd/vmlinuz priority=low vga=788 theme=dark --- 
+-            initrd   /install.amd/initrd.gz
+-        }
+         menuentry --hotkey=r '... Rescue mode' {
+             set background_color=black
+             linux    /install.amd/vmlinuz vga=788 rescue/enable=true theme=dark --- quiet 
+             initrd   /install.amd/initrd.gz
+         }
+-        menuentry --hotkey=a '... Automated install' {
+-            set background_color=black
+-            linux    /install.amd/vmlinuz auto=true priority=critical vga=788 theme=dark --- quiet 
+-            initrd   /install.amd/initrd.gz
+-        }
+     }
+ }
+-menuentry --hotkey=s 'Install with speech synthesis' {
++menuentry --hotkey=s 'AllStarLink Install with speech synthesis' {
+     set background_color=black
+-    linux    /install.amd/vmlinuz vga=788 speakup.synth=soft --- quiet 
++    linux    /install.amd/vmlinuz priority=critical auto=true priority=critical ga=788 speakup.synth=soft --- quiet 
+     initrd   /install.amd/gtk/initrd.gz
+ }
