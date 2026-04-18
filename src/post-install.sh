@@ -15,6 +15,7 @@ dpkg -i /tmp/asl-apt-repos.deb13_all.deb
 rm -f /tmp/asl-apt-repos.deb13_all.deb
 
 ## Now Install ASL3
+apt update
 apt install -y asl3 asl3-menu allmon3 asl3-appliance vim-nox
 
 # Create motd & issue
@@ -22,7 +23,7 @@ echo "" > /etc/issue
 echo "" > /etc/issue.net
 
 # Install non-package files
-pushd /tmp/asl3
+pushd /tmp/asl3/firstboot
 make install
 popd
 
@@ -30,4 +31,4 @@ popd
 touch /asl3-first-boot-needed
 
 # Cleanup
-rm -rf /tmp/asl3
+rm -rf /tmp/asl3/

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+SRC="$(pwd)/src"
+FIRSTBOOT_SRC="${SRC}/firstboot"
+ISO_SRC="$(pwd)/iso"
+
+
 # Logic Checks
 if [ ! -x /usr/bin/xorriso ]; then
 	echo "xorriso is not installed"
@@ -23,14 +28,17 @@ fi
 
 # Argparse
 OPTIND=1
-while getopts d:v: opt
+while getopts d:p:v: opt
 do
 	case $opt in
 		d)
-			debian_ver=$OPTARG
+			DEB_ISO=$OPTARG
+			;;
+		p)
+			PRESEED_FILE=$OPTARG
 			;;
 		v)
-			build_ver=$OPTARG
+			BUILD_VER=$OPTARG
 			;;
 		*)
 			exit 1
@@ -38,37 +46,44 @@ do
 	esac
 done
 
-if [ -z "${debian_ver}" ]; then
+if [ -z "${DEB_ISO}" ]; then
 	echo "Missing '-d DEBIAN.iso'"
 	exit 1
 fi
 
-if [ -z "${build_ver}" ]; then
+if [ -z "${PRESEED_FILE}" ]; then
+	echo "Missing '-v PRESEED_FILE'"
+	exit 1
+else
+	PRESEED_FILE=$(readlink -f ${PRESEED_FILE})
+fi
+
+if [ -z "${BUILD_VER}" ]; then
 	echo "Missing '-v BUILD_VER'"
 	exit 1
 fi
 
-DEB_ISO=$debian_ver
-TMP_DIR=$(mktemp -d)
-
-if [ ! -d iso/ ]; then
-	mkdir iso
-else
-	chmod -R +w iso/
-	rm -rf iso/*
-fi
-
-set -x 
+set -x
 set -e
 
+TMP_DIR=$(mktemp -d)
+
+if [ ! -d ${ISO_SRC} ]; then
+	mkdir ${ISO_SRC}
+else
+	chmod -R +w ${ISO_SRC}
+	rm -rf ${ISO_SRC}
+fi
+
+
 # Unpack the ISO
-xorriso -osirrox on -indev $debian_ver \
-	 -extract / iso/
-cd iso
+xorriso -osirrox on -indev $DEB_ISO \
+	 -extract / ${ISO_SRC}
+cd ${ISO_SRC}
 
 ## Update Grub/EFI
 chmod -R +w boot/grub EFI/debian
-patch -p0 < ../grub.patch
+patch -p0 < ${SRC}/grub.patch
 cp boot/grub/grub.cfg boot/grub/x86_64-efi/grub.cfg
 cp boot/grub/grub.cfg EFI/debian/grub.cfg
 mcopy -Do -i boot/grub/efi.img boot/grub/grub.cfg ::efi/debian/grub.cfg
@@ -80,25 +95,31 @@ chmod -R -w boot/grub EFI/debian
 
 ## Update ISOLINUX
 chmod -R +w isolinux/
-patch -p0 < ../isolinux.patch
+patch -p0 < ${SRC}/isolinux.patch
 chmod -R -w isolinux/
 
 ## Add preseed to the initrd
 chmod -R +w install.amd/
+cp ${PRESEED_FILE} preseed.cfg
+cp ${SRC}/early.sh early.sh
+cp ${SRC}/late.sh late.sh
 find install.amd/ -name 'initrd.gz' -type f | while read f
 do
 	gunzip $f
 	f=$(echo $f | sed 's/\.gz//g')
-	echo ../preseed.cfg | cpio -H newc -o -A -F $f
+	echo preseed.cfg | cpio -H newc -o -A -F $f
+	echo early.sh | cpio -H newc -o -A -F $f
+	echo late.sh | cpio -H newc -o -A -F $f
 	gzip $f
 done
 chmod -R -w install.amd/
 
 ## Stage our custom files
-cp ../post-install.sh .
-mkdir asl3
-cp ../src/* asl3/
+pwd
+cp ${SRC}/post-install.sh .
 chmod 755 post-install.sh
+mkdir asl3
+cp -r ${FIRSTBOOT_SRC} asl3/
 
 ## Regnerate the md5sum.txt
 chmod +w md5sum.txt
@@ -109,7 +130,7 @@ chmod -w md5sum.txt
 xorriso -as mkisofs \
     -r \
     -V "ASL Debian Installer" \
-    -o ../asl-debian-installer-v$build_ver.iso \
+    -o ../asl-debian-installer-v$BUILD_VER.iso \
     -J -joliet-long \
     -cache-inodes \
     -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
@@ -120,3 +141,7 @@ xorriso -as mkisofs \
       -no-emul-boot \
     -isohybrid-gpt-basdat \
     .
+
+## Cleanup
+chmod -R +w ${ISO_SRC}
+rm -rf ${ISO_SRC}
