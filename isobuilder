@@ -101,14 +101,12 @@ chmod -R -w isolinux/
 ## Add preseed to the initrd
 chmod -R +w install.amd/
 cp ${PRESEED_FILE} preseed.cfg
-cp ${SRC}/early.sh early.sh
 cp ${SRC}/late.sh late.sh
 find install.amd/ -name 'initrd.gz' -type f | while read f
 do
 	gunzip $f
 	f=$(echo $f | sed 's/\.gz//g')
 	echo preseed.cfg | cpio -H newc -o -A -F $f
-	echo early.sh | cpio -H newc -o -A -F $f
 	echo late.sh | cpio -H newc -o -A -F $f
 	gzip $f
 done

@@ -16,7 +16,7 @@ rm -f /tmp/asl-apt-repos.deb13_all.deb
 
 ## Now Install ASL3
 apt update
-apt install -y asl3 asl3-menu allmon3 asl3-appliance vim-nox
+apt install -y asl3 asl3-menu allmon3 asl3-appliance vim-nox make
 
 # Create motd & issue
 echo "" > /etc/issue
