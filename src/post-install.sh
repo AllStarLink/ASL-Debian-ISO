@@ -14,6 +14,9 @@ curl -L -o /tmp/asl-apt-repos.deb13_all.deb \
 dpkg -i /tmp/asl-apt-repos.deb13_all.deb
 rm -f /tmp/asl-apt-repos.deb13_all.deb
 
+## Disable the cdrom entry
+sed -i 's|^deb cdrom:|#deb cdrom:|' /etc/apt/sources.list
+
 ## Now Install ASL3
 apt update
 apt install -y asl3 asl3-menu allmon3 asl3-appliance vim-nox make
