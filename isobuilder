@@ -52,7 +52,7 @@ if [ -z "${DEB_ISO}" ]; then
 fi
 
 if [ -z "${PRESEED_FILE}" ]; then
-	echo "Missing '-v PRESEED_FILE'"
+	echo "Missing '-p PRESEED_FILE'"
 	exit 1
 else
 	PRESEED_FILE=$(readlink -f ${PRESEED_FILE})
@@ -125,10 +125,11 @@ find -follow -type f ! -name md5sum.txt -print0 | xargs -0 md5sum > md5sum.txt
 chmod -w md5sum.txt
 
 ## Build the preseeded image
+
 xorriso -as mkisofs \
     -r \
     -V "ASL Debian Installer" \
-    -o ../asl-debian-installer-v$BUILD_VER.iso \
+    -o ../asl-debian-installer-$BUILD_VER.iso \
     -J -joliet-long \
     -cache-inodes \
     -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
