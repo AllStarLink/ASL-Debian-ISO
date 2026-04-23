@@ -26,7 +26,7 @@ echo "" > /etc/issue
 echo "" > /etc/issue.net
 
 # Install non-package files
-pushd /tmp/asl3/firstboot
+pushd /tmp/asl3
 make install
 popd
 
