@@ -1,4 +1,11 @@
 # ASL-Debian-ISO
+
+[!IMPORTANT]
+This script and repo is for relatively advanced Linux users to
+build "preseeded" Debian installers for various architectures
+and platforms. This repo is not for casual beginners or people
+who are wanting to simply install an appliance.
+
 This repository creates a full Debian installer for AllStarLink v3.
 The objectives of this are:
 
@@ -36,11 +43,11 @@ https://www.debian.org/releases/bookworm/amd64/apbs04.en.html.
 
 6. The ISO file is then ready for use.
 
-
 ## Customization Nodes
 The most problematic section of the `preseed.cfg` are those dealing with disks. The
-`generic.cfg` file expects the device to be `/dev/vda` and that it will consume all
-free disk space. This is the most common structure for a VPS-hosted Linux installation.
+`generic-hw-sda.cfg` file expects the device to be `/dev/sda` and that it will consume all
+free disk space. The `generic-qemu-vda.cfg` will work for more new VPS-hosted Linux installations. The `dell3040.cfg` is a mostly-automated installer for Dell/Wyse 3040 units.
+
 If you want to customize the disk layouts, pay particular attention to the elements
 in the `- Partitioning -` and `- Bootloader -` sections.
 
