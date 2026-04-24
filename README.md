@@ -1,10 +1,10 @@
 # ASL-Debian-ISO
 
-[!IMPORTANT]
-This script and repo is for relatively advanced Linux users to
-build "preseeded" Debian installers for various architectures
-and platforms. This repo is not for casual beginners or people
-who are wanting to simply install an appliance.
+> [!IMPORTANT]
+> This script and repo is for relatively advanced Linux users to
+> build "preseeded" Debian installers for various architectures
+> and platforms. This repo is not for casual beginners or people
+> who are wanting to simply install an appliance.
 
 This repository creates a full Debian installer for AllStarLink v3.
 The objectives of this are:
