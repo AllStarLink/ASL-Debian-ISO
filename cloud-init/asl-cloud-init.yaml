@@ -1,0 +1,7 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+runcmd:
+  - wget -O /tmp/cloud-install.sh https://repo.allstarlink.org/images/cloud-init/cloud-install.sh
+  - chmod +x /tmp/cloud-install.sh
+  - /tmp/cloud-install.sh
