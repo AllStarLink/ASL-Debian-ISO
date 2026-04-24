@@ -6,6 +6,9 @@
 > and platforms. This repo is not for casual beginners or people
 > who are wanting to simply install an appliance.
 
+
+## Full ISO Image
+
 This repository creates a full Debian installer for AllStarLink v3.
 The objectives of this are:
 
@@ -15,7 +18,7 @@ autoinstalled within Debian.
 2. Create device/VM/VPS-specific autobuild configurations that are
 using the Debian `preseed.cfg` structure for installation.
 
-## Using This
+### Using This
 The basic steps are:
 
 1. Get this repo with `git clone https://github.com/AllStarLink/ASL-Debian-ISO.git`
@@ -43,7 +46,7 @@ https://www.debian.org/releases/bookworm/amd64/apbs04.en.html.
 
 6. The ISO file is then ready for use.
 
-## Customization Nodes
+### Customization Nodes
 The most problematic section of the `preseed.cfg` are those dealing with disks. The
 `generic-hw-sda.cfg` file expects the device to be `/dev/sda` and that it will consume all
 free disk space. The `generic-qemu-vda.cfg` will work for more new VPS-hosted Linux installations. The `dell3040.cfg` is a mostly-automated installer for Dell/Wyse 3040 units.
@@ -59,3 +62,13 @@ or comment out the `d-i` lines to allow the installer to prompt.
 
 It is *strongly* recommended to add any scripted customizations to `post-install.sh`
 and not `late.sh`.
+
+### Burning the Image
+Note that Balena Etcher on Windows does not work correctly with Debian
+multi-mode installers and this extends to the ASL image based on
+Debian. For Windows, use [Rufus](https://rufus.ie/en/) in "dd mode".
+
+
+## cloud-init Template
+This is for using cloud-init on a Debian installer for standard
+VPS. This is located in `/cloud-init`.
