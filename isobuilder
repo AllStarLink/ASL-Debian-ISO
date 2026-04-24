@@ -11,10 +11,6 @@ if [ ! -x /usr/bin/patch ]; then
     echo "patch is not installed"
     exit 1
 fi
-if [ ! -x /usr/bin/mcopy ]; then
-	echo "mcopy/mtools is not installed"
-	exit 1
-fi
 
 # Argparse
 OPTIND=1
@@ -78,12 +74,11 @@ set -x
 set -e
 
 WORK_DIR=$(mktemp -d)
-#trap "rm -rf ${WORK_DIR}" EXIT
+trap "rm -rf ${WORK_DIR}" EXIT
 
 # Extract only the files we need to modify
 xorriso -osirrox on -indev ${DEB_ISO} \
     -extract /boot/grub/grub.cfg    ${WORK_DIR}/grub.cfg \
-    -extract /boot/grub/efi.img     ${WORK_DIR}/efi.img \
     -extract /isolinux/drk.cfg      ${WORK_DIR}/drk.cfg \
     -extract /isolinux/drkgtk.cfg   ${WORK_DIR}/drkgtk.cfg \
     -extract /isolinux/gtk.cfg      ${WORK_DIR}/gtk.cfg \
@@ -98,10 +93,6 @@ chmod +w ${WORK_DIR}/*
 
 ## Update grub
 patch ${WORK_DIR}/grub.cfg < ${SRC}/grub.patch
-mcopy -Do -i ${WORK_DIR}/efi.img ${WORK_DIR}/grub.cfg ::EFI/debian/grub.cfg
-mcopy -i ${WORK_DIR}/efi.img ::EFI/debian/grub.cfg /tmp/grub-efi-verify.cfg
-sha256sum ${WORK_DIR}/grub.cfg /tmp/grub-efi-verify.cfg
-rm /tmp/grub-efi-verify.cfg
 
 ## Update isolinux
 patch -p1 -d ${WORK_DIR} < ${SRC}/isolinux.patch
@@ -124,7 +115,6 @@ xorriso \
     -map ${WORK_DIR}/grub.cfg       /boot/grub/grub.cfg \
     -map ${WORK_DIR}/grub.cfg       /boot/grub/x86_64-efi/grub.cfg \
     -map ${WORK_DIR}/grub.cfg       /EFI/debian/grub.cfg \
-    -map ${WORK_DIR}/efi.img        /boot/grub/efi.img \
     -map ${WORK_DIR}/drk.cfg        /isolinux/drk.cfg \
     -map ${WORK_DIR}/drkgtk.cfg     /isolinux/drkgtk.cfg \
     -map ${WORK_DIR}/gtk.cfg        /isolinux/gtk.cfg \
@@ -138,3 +128,4 @@ xorriso \
     -map ${SRC}/post-install.sh     /post-install.sh \
     -map ${FIRSTBOOT_SRC}/          /asl3/ \
     -commit
+
